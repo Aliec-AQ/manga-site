@@ -229,49 +229,30 @@ window.addEventListener('load', () => {
 
             saveToLocalStorage(){
                 const dataToStore = {
-                    showTagDropdown: this.showTagDropdown,
-                    mangaList: this.mangaList,
                     selectedManga: this.selectedManga,
                     chapters: this.chapters,
                     selectedChapter: this.selectedChapter,
                     chapterImages: this.chapterImages,
-                    loading: this.loading,
-                    error: this.error,
-                    searchQuery: this.searchQuery,
                     nextChapterId: this.nextChapterId,
                     prevChapterId: this.prevChapterId,
-                    includedTags: this.includedTags,
-                    excludedTags: this.excludedTags,
-                    availableTags: this.availableTags,
-                    pagination: this.pagination
                 };
                 localStorage.setItem('mangaData', JSON.stringify(dataToStore));
             },
             loadLocalStorage(){
                 const data = JSON.parse(localStorage.getItem('mangaData'));
                 if (data) {
-                    this.showTagDropdown = data.showTagDropdown;
-                    this.mangaList = data.mangaList;
                     this.selectedManga = data.selectedManga;
                     this.chapters = data.chapters;
                     this.selectedChapter = data.selectedChapter;
                     this.chapterImages = data.chapterImages;
-                    this.loading = data.loading;
-                    this.error = data.error;
-                    this.searchQuery = data.searchQuery;
                     this.nextChapterId = data.nextChapterId;
                     this.prevChapterId = data.prevChapterId;
-                    this.includedTags = data.includedTags;
-                    this.excludedTags = data.excludedTags;
-                    this.availableTags = data.availableTags;
-                    this.pagination = data.pagination;
                 }
             },
         },
 
         beforeMount() {
             this.loadLocalStorage();
-            console.log(this.mangaList);
         },
 
         async mounted() {

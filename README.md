@@ -1,5 +1,5 @@
-# Site manga thingy 
-Site web pour les mangas qui utilise l'API de mangadex 
+# Manga thingy 
+Site web et application mobile pour les mangas qui utilise l'API de mangadex 
 
 
 - lien vers l'api : https://api.mangadex.org/docs/

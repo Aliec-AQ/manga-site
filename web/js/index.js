@@ -4,25 +4,37 @@ window.addEventListener('load', () => {
     Vue.createApp({
         data() {
             return {
+                // Recherche de manga
                 showTagDropdown: false,
-                mangaList: [],
-                selectedManga: null,
-                chapters: [],
-                selectedChapter: null,
-                chapterImages: [],
-                loading: true,
-                error: null,
                 searchQuery: '',
-                nextChapterId: null,
-                prevChapterId: null,
                 includedTags: [],
                 excludedTags: [],
                 availableTags: [],
+
+                // Liste des mangas
+                mangaList: [],
                 pagination: {
                     limit: 40,
                     offset: 0,
                     total: 0
-                }
+                },
+                
+                // Détail d'un manga
+                selectedManga: null,
+                chapters: [],
+                
+                // Détail d'un chapitre
+                selectedChapter: null,
+                chapterImages: [],
+                nextChapterId: null,
+                prevChapterId: null,
+
+                // Autres
+                loading: true,
+                error: null,
+                favoriteManga: [],
+                availableLanguages: ['en', 'fr'],
+                language: 'en',
             }
         },
 
@@ -31,10 +43,11 @@ window.addEventListener('load', () => {
             /*********************
             *     LOAD DATA      *
             **********************/
+            // Charge la liste des mangas avec les paramètres donnés
             async loadManga(params = {}) {
                 this.loading = true
                 try {
-                    const response = await axios.get(`${config.apiUrl}/manga`, { params: { ...params, limit: this.pagination.limit, offset: this.pagination.offset, includes: ['cover_art'] } })
+                    const response = await axios.get(`${config.apiUrl}/manga`, { params: { ...params, limit: this.pagination.limit, offset: this.pagination.offset, includes: ['cover_art'], availableTranslatedLanguage : [this.language] } })
                     this.mangaList = response.data.data
                     this.mangaList.forEach(manga => {
                         manga.coverArt = config.coverUrl + manga.id + '/' + manga.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName
@@ -49,6 +62,7 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Récupère les tags disponibles pour les mangas
             async fetchTags() {
                 try {
                     const response = await axios.get(`${config.apiUrl}/manga/tag`)
@@ -58,6 +72,7 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Recherche des mangas en fonction des tags et de la requête de recherche
             async searchManga() {
                 this.goToMenu();
                 this.loading = true;
@@ -88,13 +103,14 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Charge les détails du manga sélectionné
             async loadSelectedManga(mangaId) {
                 this.loading = true;
                 this.selectedManga = mangaId;
                 try {
                     // Fetch manga aggregate data
                     const aggregateResponse = await axios.get(`${config.apiUrl}/manga/${mangaId}/aggregate`, {
-                        params: { translatedLanguage: ['en'] }
+                        params: { translatedLanguage: [this.language] }
                     });
                     const volumes = aggregateResponse.data.volumes;
                     this.chapters = Object.values(volumes).flatMap(volume => Object.values(volume.chapters));
@@ -115,6 +131,7 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Charge le contenu du chapitre sélectionné
             async loadChapterContent(chapterId) {
                 this.loading = true
                 this.selectedChapter = chapterId
@@ -126,7 +143,7 @@ window.addEventListener('load', () => {
 
                     this.chapterImages = data.map(image => `${baseUrl}/data/${hash}/${image}`)
 
-                    // Find the next chapter ID
+                    // Trouve l'ID du chapitre suivant
                     const currentChapterIndex = this.chapters.findIndex(chapter => chapter.id === chapterId)
                     if (currentChapterIndex !== -1 && currentChapterIndex < this.chapters.length - 1) {
                         this.nextChapterId = this.chapters[currentChapterIndex + 1].id
@@ -134,7 +151,7 @@ window.addEventListener('load', () => {
                         this.nextChapterId = null
                     }
 
-                    // Find the previous chapter ID
+                    // Trouve l'ID du chapitre précédent
                     if (currentChapterIndex !== -1 && currentChapterIndex > 0) {
                         this.prevChapterId = this.chapters[currentChapterIndex - 1].id
                     } else {
@@ -154,6 +171,7 @@ window.addEventListener('load', () => {
              *    NAVIGATION    *
              * *******************/
 
+            // Retourne au menu principal
             goToMenu() {
                 this.selectedManga = null
                 this.selectedChapter = null
@@ -163,6 +181,7 @@ window.addEventListener('load', () => {
                 this.saveToLocalStorage();
             },
 
+            // Affiche les détails du manga sélectionné
             goToDetail() {
                 this.selectedChapter = null
                 this.chapterImages = []
@@ -170,6 +189,7 @@ window.addEventListener('load', () => {
                 this.saveToLocalStorage();
             },
 
+            // Passe à la page suivante de la liste des mangas
             nextPage() {
                 if (this.pagination.offset + this.pagination.limit < this.pagination.total) {
                     this.pagination.offset += this.pagination.limit
@@ -177,6 +197,7 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Revient à la page précédente de la liste des mangas
             prevPage() {
                 if (this.pagination.offset > 0) {
                     this.pagination.offset -= this.pagination.limit
@@ -188,11 +209,13 @@ window.addEventListener('load', () => {
              *   TAG FILTER    *
              * *******************/
 
+            // Affiche ou cache le menu déroulant des tags
             toggleTagDropdown() {
                 this.showTagDropdown = !this.showTagDropdown;
                 console.log(this.showTagDropdown);
             },
             
+            // Met à jour la sélection des tags inclus et exclus
             updateTagSelection(tagName, type) {
                 if (type === 'include') {
                     if (this.includedTags.includes(tagName)) {
@@ -215,6 +238,7 @@ window.addEventListener('load', () => {
             /*********************
              *  EVENT HANDLERS  *
              * *******************/
+            // Gère les événements de pression des touches pour naviguer entre les chapitres
             handleKeydown(event) {
                 if (event.key === 'ArrowLeft' && this.prevChapterId) {
                     this.loadChapterContent(this.prevChapterId);
@@ -227,6 +251,7 @@ window.addEventListener('load', () => {
              *  LOCAL STORAGE   *
              * *******************/
 
+            // Sauvegarde les données dans le localStorage
             saveToLocalStorage(){
                 const dataToStore = {
                     selectedManga: this.selectedManga,
@@ -235,9 +260,12 @@ window.addEventListener('load', () => {
                     chapterImages: this.chapterImages,
                     nextChapterId: this.nextChapterId,
                     prevChapterId: this.prevChapterId,
+                    favoriteManga: this.favoriteManga,
+                    language: this.language,
                 };
                 localStorage.setItem('mangaData', JSON.stringify(dataToStore));
             },
+            // Charge les données depuis le localStorage
             loadLocalStorage(){
                 const data = JSON.parse(localStorage.getItem('mangaData'));
                 if (data) {
@@ -247,6 +275,8 @@ window.addEventListener('load', () => {
                     this.chapterImages = data.chapterImages;
                     this.nextChapterId = data.nextChapterId;
                     this.prevChapterId = data.prevChapterId;
+                    this.favoriteManga = data.favoriteManga;
+                    this.language = data.language;
                 }
             },
         },
@@ -271,6 +301,12 @@ window.addEventListener('load', () => {
             }
 
             window.addEventListener('keydown', this.handleKeydown)
+        },
+
+        watch: {
+            language() {
+                this.loadManga();
+            }
         }
     }).mount('#app')
 })

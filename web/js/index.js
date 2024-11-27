@@ -30,6 +30,7 @@ window.addEventListener('load', () => {
                 prevChapterId: null,
 
                 // Autres
+                page: 'home',
                 loading: true,
                 error: null,
                 favoriteManga: [],
@@ -44,10 +45,10 @@ window.addEventListener('load', () => {
             *     LOAD DATA      *
             **********************/
             // Charge la liste des mangas avec les paramètres donnés
-            async loadManga(params = {}) {
+            async loadManga(params = {}, pagination={limit: this.pagination.limit, offset: this.pagination.offset}) {
                 this.loading = true
                 try {
-                    const response = await axios.get(`${config.apiUrl}/manga`, { params: { ...params, limit: this.pagination.limit, offset: this.pagination.offset, includes: ['cover_art'], availableTranslatedLanguage : [this.language] } })
+                    const response = await axios.get(`${config.apiUrl}/manga`, { params: { ...params, ...pagination, includes: ['cover_art'], availableTranslatedLanguage : [this.language] } })
                     this.mangaList = response.data.data
                     this.mangaList.forEach(manga => {
                         manga.coverArt = config.coverUrl + manga.id + '/' + manga.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName
@@ -123,6 +124,8 @@ window.addEventListener('load', () => {
                     this.mangaDetails.coverArt = config.coverUrl+this.mangaDetails.id + '/' + detailsResponse.data.data.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName;
                     this.mangaDetails.authorDetails = detailsResponse.data.data.relationships.find(relationship => relationship.type === 'author').attributes.name;
 
+                    this.page="detail"
+
                     this.saveToLocalStorage();
                 } catch (error) {
                     this.error = error;
@@ -142,6 +145,8 @@ window.addEventListener('load', () => {
                     const data = serverResponse.data.chapter.data
 
                     this.chapterImages = data.map(image => `${baseUrl}/data/${hash}/${image}`)
+
+                    this.page="chapter"
 
                     // Trouve l'ID du chapitre suivant
                     const currentChapterIndex = this.chapters.findIndex(chapter => chapter.id === chapterId)
@@ -173,18 +178,21 @@ window.addEventListener('load', () => {
 
             // Retourne au menu principal
             goToMenu() {
-                this.selectedManga = null
-                this.selectedChapter = null
-                this.chapterImages = []
-                this.chapters = []
+                this.selectedManga = null;
+                this.selectedChapter = null;
+                this.chapterImages = [];
+                this.chapters = [];
 
-                this.saveToLocalStorage();
+                this.page = 'home';
+
+                this.loadManga();
             },
 
             // Affiche les détails du manga sélectionné
             goToDetail() {
-                this.selectedChapter = null
-                this.chapterImages = []
+                this.selectedChapter = null;
+                this.chapterImages = [];
+                this.page = "detail"
 
                 this.saveToLocalStorage();
             },
@@ -255,6 +263,33 @@ window.addEventListener('load', () => {
             },
 
             /*********************
+             *  GESTION FAvoris  *
+             *********************/
+
+            // Ajoute ou enlève un id de la liste des favoris
+            toggleFavorite(idManga, add){
+                if(add){
+                    if (this.favoriteManga.length <= 100){
+                        this.favoriteManga.push(idManga);
+                    }
+                }else{
+                    this.favoriteManga = this.favoriteManga.filter(manga => manga !== idManga);
+                }
+                this.saveToLocalStorage();
+            },
+
+            // 
+            loadFavorites(){
+                if (this.favoriteManga.length > 0) {
+                    const params = {
+                        ids: this.favoriteManga.slice(0, 100)
+                    };
+                    this.page="favoris";
+                    this.loadManga(params, {});
+                }
+            },
+
+            /*********************
              *  LOCAL STORAGE   *
              * *******************/
 
@@ -272,6 +307,7 @@ window.addEventListener('load', () => {
                 };
                 localStorage.setItem('mangaData', JSON.stringify(dataToStore));
             },
+
             // Charge les données depuis le localStorage
             loadLocalStorage(){
                 const data = JSON.parse(localStorage.getItem('mangaData'));

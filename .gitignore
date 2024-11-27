@@ -1,0 +1,3 @@
+*.lock
+*.yaml
+node_modules/

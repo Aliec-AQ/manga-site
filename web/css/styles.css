@@ -226,8 +226,8 @@
   text-align: center;
   margin-bottom: 10px;
 }
-.chapter-images img {
-  max-width: 100%;
+.chapter-images div img {
+  max-width: 40vw;
   height: auto;
 }
 

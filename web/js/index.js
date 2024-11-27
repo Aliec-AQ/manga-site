@@ -246,6 +246,7 @@ window.addEventListener('load', () => {
              * *******************/
             // Gère les événements de pression des touches pour naviguer entre les chapitres
             handleKeydown(event) {
+                if (this.loading) return;
                 if (event.key === 'ArrowLeft' && this.prevChapterId) {
                     this.loadChapterContent(this.prevChapterId);
                 } else if (event.key === 'ArrowRight' && this.nextChapterId) {

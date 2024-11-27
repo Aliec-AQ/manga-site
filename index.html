@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga Content</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/vue@latest"></script>
+    <script src="./node_modules/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="fixed-top">
+            <div class="nav-bar">
+                <button @click="goToMenu" class="header-button">Home</button>
+                <div class="search-container">
+                <input type="text" v-model="searchQuery" placeholder="Search manga..." @keyup.enter="searchManga">
+                <button @click="searchManga" class="search-button">Search</button>
+                <button @click="toggleTagDropdown" class="search-button">Tags</button>
+            </div>
+            </div>
+            <div class="tag-select-container" v-if="showTagDropdown">
+                <label>Tags:</label>
+                <div class="tag-grid">
+                    <div v-for="tag in availableTags" :key="tag.id" class="tag-item">
+                        <label>{{ tag.attributes.name.en }}</label>
+                        <div class="checkbox-group">
+                            <i class="fas fa-check icon include" :class="{ active: includedTags.includes(tag.attributes.name.en) }" @click="updateTagSelection(tag.attributes.name.en, 'include')"></i>
+                            <i class="fas fa-times icon exclude" :class="{ active: excludedTags.includes(tag.attributes.name.en) }" @click="updateTagSelection(tag.attributes.name.en, 'exclude')"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-if="error" class="error">{{ error.message }}</div>
+        <main v-if="!loading && !error" class="content">
+            
+            <!-- Display Manga List -->
+            <div v-if="!selectedManga && !selectedChapter">
+                <h1>Recent Manga</h1>
+                <ul class="manga-list">
+                    <li v-for="manga in mangaList" :key="manga.id" @click="loadSelectedManga(manga.id)" class="card">
+                        <img :src="manga.coverArt" alt="Cover Art" class="manga-cover" loading="lazy">
+                        <div class="manga-title">{{ manga.attributes.title.en }}</div>
+                    </li>
+                </ul>
+                <div class="pagination-controls">
+                    <button @click="prevPage" :disabled="pagination.offset === 0">Previous</button>
+                    <button @click="nextPage" :disabled="pagination.offset + pagination.limit >= pagination.total">Next</button>
+                </div>
+            </div>
+
+            <!-- Display selected Manga -->
+            <div v-if="selectedManga && !selectedChapter" class="manga-container">
+                <h1>{{ mangaDetails.attributes.title.en }}</h1>
+                <div class="manga-details">
+                    <img :src="mangaDetails.coverArt" alt="Cover Art" loading="lazy">
+                    <div class="info">
+                        <p><span class="label">Original Language:</span> {{ mangaDetails.attributes.originalLanguage }}</p>
+                        <p><span class="label">Auteur</span> {{ mangaDetails.authorDetails }}</p>
+                        <p><span class="label">Status:</span> {{ mangaDetails.attributes.status }}</p>
+                        <p><span class="label">Année:</span> {{ mangaDetails.attributes.year }}</p>
+                        <p><span class="label">Tags:</span>
+                            <span v-for="tag in mangaDetails.attributes.tags" :key="tag.id" class="tag">{{ tag.attributes.name.en }}</span>
+                        </p>
+                        <p><span class="label">Description:</span></p>
+                        <p>{{ mangaDetails.attributes.description.en }}</p>
+                        <button @click="goToMenu" class="back-button">Back to Manga List</button>
+                    </div>
+                </div>
+                <h2>Chapters</h2>
+                <ul class="chapter-list">
+                    <li v-for="chapter in chapters" :key="chapter.id" @click="loadChapterContent(chapter.id)" class="chapter-item">
+                        {{ chapter.chapter }}
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Display selected Chapter -->
+            <div v-if="selectedChapter" class="chapter">
+                <h1>Chapter Content</h1>
+                <div class="chapter-images">
+                    <div v-for="image in chapterImages" :key="image">
+                        <img :src="image" loading="lazy" />
+                    </div>
+                </div>
+                
+                <div class="navigation-controls">
+                    <button v-if="prevChapterId" @click="loadChapterContent(prevChapterId)">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button @click="goToDetail">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button v-if="nextChapterId" @click="loadChapterContent(nextChapterId)">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="./js/index.js"></script>
+</body>
+</html>

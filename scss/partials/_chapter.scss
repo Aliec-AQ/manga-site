@@ -1,0 +1,66 @@
+@import './config';
+
+.chapter{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+
+    a {
+        color: $primary-color;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    span {
+        color: $font-color;
+    }
+}
+
+.chapter-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    div {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+.navigation-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background-color: $primary-color;
+        color: $font-color;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $dark-primary-color;
+        }
+    }
+}

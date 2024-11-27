@@ -1,0 +1,104 @@
+@import './config.scss';
+
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: $bg-color;
+    border-bottom: 1px solid $secondary-color;
+
+    .header-button {
+        background-color: $primary-color;
+        color: $font-color-light;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: $dark-primary-color;
+        }
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid $secondary-color;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            background-color: $primary-color;
+            color: $font-color-light;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: $dark-primary-color;
+            }
+        }
+    }
+}
+
+.tag-select-container {
+    margin: 0 40px;
+    background-color: $bg-color;
+    border: 1px solid $secondary-color;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .tag-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+    }
+
+    .tag-item {
+        display: flex;
+        justify-content: space-between;
+
+        .checkbox-group {
+            display: flex;
+            gap: 5px;
+
+            .icon {
+                font-size: 16px;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 4px;
+                width: 16px;
+                text-align: center;
+                transition: background-color 0.3s, color 0.3s;
+
+                &.include {
+                    color: $primary-color;
+                }
+
+                &.exclude {
+                    color: red;
+                }
+
+                &.active {
+                    background-color: $primary-color;
+                    color: $font-color-light;
+                }
+            }
+        }
+    }
+}

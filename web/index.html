@@ -14,7 +14,7 @@
         <header class="fixed-top">
             <div class="nav-bar">
                 <button @click="goToMenu" class="header-button">Home</button>
-                <select v-model="language" @change="sortManga">
+                <select v-model="language">
                     <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang }}</option>
                 </select>
                 <div class="search-container">
@@ -50,8 +50,15 @@
                     </li>
                 </ul>
                 <div class="pagination-controls">
-                    <button @click="prevPage" :disabled="pagination.offset === 0">Previous</button>
-                    <button @click="nextPage" :disabled="pagination.offset + pagination.limit >= pagination.total">Next</button>
+                    <button @click="prevPage" :disabled="pagination.offset === 0">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button v-for="page in pageRange" :key="page" @click="goToPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </button>
+                    <button @click="nextPage" :disabled="pagination.offset + pagination.limit >= pagination.total">
+                         <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
 

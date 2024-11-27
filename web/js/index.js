@@ -205,6 +205,12 @@ window.addEventListener('load', () => {
                 }
             },
 
+            // Passe à la page donnée de la liste des mangas
+            goToPage(page) {
+                this.pagination.offset = (page - 1) * this.pagination.limit;
+                this.loadManga();
+            },
+
             /*********************
              *   TAG FILTER    *
              * *******************/
@@ -281,6 +287,26 @@ window.addEventListener('load', () => {
             },
         },
 
+        computed: {
+            pageCount() {
+                return Math.ceil(this.pagination.total / this.pagination.limit);
+            },
+            
+            currentPage() {
+                return Math.floor(this.pagination.offset / this.pagination.limit) + 1;
+            },
+
+            pageRange() {
+                const range = [];
+                const start = Math.max(1, this.currentPage - 3);
+                const end = Math.min(this.pageCount, this.currentPage + 3);
+                for (let i = start; i <= end; i++) {
+                    range.push(i);
+                }
+                return range;
+            }
+        },
+
         beforeMount() {
             this.loadLocalStorage();
         },
@@ -305,7 +331,11 @@ window.addEventListener('load', () => {
 
         watch: {
             language() {
-                this.loadManga();
+                if (this.selectedManga){
+                    this.loadSelectedManga(this.selectedManga);
+                }else {
+                    this.loadManga();
+                }
             }
         }
     }).mount('#app')

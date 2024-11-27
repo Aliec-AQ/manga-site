@@ -1,6 +1,26 @@
-@import 'partials/header';
-@import 'partials/manga-list';
-@import 'partials/manga-details';
-@import 'partials/chapter';
-@import 'partials/config';
-@import 'partials/random'
+@use 'partials/header' as *;
+@use 'partials/manga-list' as *;
+@use 'partials/manga-details' as *;
+@use 'partials/chapter' as *;
+@use 'partials/config' as *;
+@use 'partials/random' as *;
+
+@media screen and (min-width: 1200px) {
+    @include mainGrid();
+}
+
+@media screen and (max-width: 1200px) {
+    @include mainGrid();
+}
+
+@media screen and (max-width: 991px) {
+    @include mainGrid(4,23%);
+}
+
+@media screen and (max-width: 767px) {
+    @include mainGrid(3,30%);
+}
+
+@media screen and (max-width: 575px) {
+    @include mainGrid(2, 48%);
+}

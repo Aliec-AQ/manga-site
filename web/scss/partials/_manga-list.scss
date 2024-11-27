@@ -1,39 +1,45 @@
-@import './config.scss';
+@use 'config' as *;
 
-.manga-list {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
+@mixin mainGrid ($NbColumn:6,$ColumnWidth:15%,$Lsmall:1,$Lmedium:1,$Llarge:3){
 
-    .card {
-        border-radius: 15px;
-        background-color: $dark-secondary-color;
-        transition: background-color 0.3s, transform 0.3s;
+    .manga-list {
+        display: grid;
+        grid-template-columns: repeat($NbColumn,$ColumnWidth);
+        grid-auto-rows: auto;
+        grid-auto-flow: row dense;
+        gap: 20px;
+        padding: 0;
+        margin: 0;
+        justify-content:space-between;
+        list-style: none;
 
-        &:hover {
-            transform: scale(1.05);
-        }
-
-        .manga-cover {
-            width: 100%;
-            aspect-ratio: 2/3;
-            margin-bottom: 10px;
-            object-fit: cover;
+        .card {
             border-radius: 15px;
-        }
+            background-color: $dark-secondary-color;
+            transition: background-color 0.3s, transform 0.3s;
+            grid-column: span $Lmedium;
 
-        .manga-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
-            color: $font-color;
+            &:hover {
+                transform: scale(1.05);
+            }
+
+            .manga-cover {
+                width: 100%;
+                aspect-ratio: 2/3;
+                margin-bottom: 10px;
+                object-fit: cover;
+                border-radius: 15px;
+            }
+
+            .manga-title {
+                font-size: 1.2em;
+                font-weight: bold;
+                text-align: center;
+                color: $font-color;
+            }
         }
     }
 }
-
 .pagination-controls {
     display: flex;
     justify-content: space-between;

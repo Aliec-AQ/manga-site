@@ -1,6 +1,8 @@
 # Manga thingy 
+***
+⚠️ Ce projet n'est pas encore terminé ⚠️
+***
 Site web pour les mangas qui utilise l'API de mangadex 
-
 
 - lien vers l'api : https://api.mangadex.org/docs/
 - lien vers une autre doc de l'api : https://api.mangadex.org/docs/swagger.html#/Manga/get-search-manga

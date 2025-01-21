@@ -1,7 +1,17 @@
 import config from './config.js'
+import HeaderComponent from './components/HeaderComponent.js'
+import MangaListComponent from './components/MangaListComponent.js'
+import MangaDetailsComponent from './components/MangaDetailsComponent.js'
+import ChapterContentComponent from './components/ChapterContentComponent.js'
 
 window.addEventListener('load', () => {
     Vue.createApp({
+        components: {
+            HeaderComponent,
+            MangaListComponent,
+            MangaDetailsComponent,
+            ChapterContentComponent
+        },
         data() {
             return {
                 // Recherche de manga

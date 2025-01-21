@@ -11,109 +11,56 @@
 </head>
 <body>
     <div id="app">
-        <header class="fixed-top">
-            <div class="nav-bar">
-                <button @click="goToMenu" class="header-button">Home</button>
-                <select v-model="language">
-                    <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang }}</option>
-                </select>
-                <button @click="loadFavorites" class="header-button">favoris</button>
-                <div class="search-container">
-                    <input type="text" v-model="searchQuery" placeholder="Search manga..." @keyup.enter="searchManga">
-                    <button @click="searchManga" class="search-button">Search</button>
-                    <button @click="toggleTagDropdown" class="search-button">Tags</button>
-                </div>
-            </div>
-            <div class="tag-select-container" v-if="showTagDropdown">
-                <label>Tags:</label>
-                <div class="tag-grid">
-                    <div v-for="tag in availableTags" :key="tag.id" class="tag-item">
-                        <label>{{ tag.attributes.name.en }}</label>
-                        <div class="checkbox-group">
-                            <i class="fas fa-check icon include" :class="{ active: includedTags.includes(tag.attributes.name.en) }" @click="updateTagSelection(tag.attributes.name.en, 'include')"></i>
-                            <i class="fas fa-times icon exclude" :class="{ active: excludedTags.includes(tag.attributes.name.en) }" @click="updateTagSelection(tag.attributes.name.en, 'exclude')"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <header-component
+            :language="language"
+            :available-languages="availableLanguages"
+            :search-query="searchQuery"
+            :show-tag-dropdown="showTagDropdown"
+            :available-tags="availableTags"
+            :included-tags="includedTags"
+            :excluded-tags="excludedTags"
+            @go-to-menu="goToMenu"
+            @load-favorites="loadFavorites"
+            @search-manga="searchManga"
+            @toggle-tag-dropdown="toggleTagDropdown"
+            @update-tag-selection="updateTagSelection"
+        ></header-component>
+        
         <div v-if="loading" class="loading">Loading...</div>
         <div v-if="error" class="error">{{ error.message }}</div>
+        
         <main v-if="!loading && !error" class="content">
-            
-            <!-- Display Manga List -->
-            <div v-if="page=='home' || page=='favoris'">
-                <h1>Recent Manga</h1>
-                <ul class="manga-list">
-                    <li v-for="manga in mangaList" :key="manga.id" @click="loadSelectedManga(manga.id)" class="card">
-                        <img :src="manga.coverArt" alt="Cover Art" class="manga-cover" loading="lazy">
-                        <div class="manga-title">{{ manga.attributes.title.en }}</div>
-                    </li>
-                </ul>
-                <div v-if="page=='home'" class="pagination-controls">
-                    <button @click="prevPage" :disabled="pagination.offset === 0">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button v-for="page in pageRange" :key="page" @click="goToPage(page)" :class="{ active: page === currentPage }">
-                        {{ page }}
-                    </button>
-                    <button @click="nextPage" :disabled="pagination.offset + pagination.limit >= pagination.total">
-                         <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+            <manga-list-component
+                v-if="page=='home' || page=='favoris'"
+                :manga-list="mangaList"
+                :pagination="pagination"
+                :page-range="pageRange"
+                :current-page="currentPage"
+                @load-selected-manga="loadSelectedManga"
+                @prev-page="prevPage"
+                @next-page="nextPage"
+                @go-to-page="goToPage"
+            ></manga-list-component>
 
-            <!-- Display selected Manga -->
-            <div v-if="selectedManga && !selectedChapter && page=='detail'" class="manga-container">
-                <h1>{{ mangaDetails.attributes.title.en }}</h1>
-                <div class="manga-details">
-                    <img :src="mangaDetails.coverArt" alt="Cover Art" loading="lazy">
-                    <div class="info">
-                        <p><span class="label">Original Language:</span> {{ mangaDetails.attributes.originalLanguage }}</p>
-                        <p><span class="label">Auteur</span> {{ mangaDetails.authorDetails }}</p>
-                        <p><span class="label">Status:</span> {{ mangaDetails.attributes.status }}</p>
-                        <p><span class="label">Année:</span> {{ mangaDetails.attributes.year }}</p>
-                        <p><span class="label">Tags:</span>
-                            <span v-for="tag in mangaDetails.attributes.tags" :key="tag.id" class="tag">{{ tag.attributes.name.en }}</span>
-                        </p>
-                        <p><span class="label">Description:</span></p>
-                        <p>{{ mangaDetails.attributes.description.en }}</p>
-                        <button @click="goToMenu" class="back-button">Back to Manga List</button>
-                        <button @click="toggleFavorite(mangaDetails.id, !favoriteManga.includes(mangaDetails.id))" class="favorite-button">
-                            {{ favoriteManga.includes(mangaDetails.id) ? 'Remove from Favorites' : 'Add to Favorites' }}
-                        </button>
-                    </div>
-                </div>
-                <h1 v-if="chapters.length == 0">Aucun chapitre disponible pour la langue {{language}}</h1>
-                <h2 v-if="chapters.length > 0 ">Chapitres</h2>
-                <ul class="chapter-list">
-                    <li v-for="chapter in chapters" :key="chapter.id" @click="loadChapterContent(chapter.id)" class="chapter-item">
-                        {{ chapter.chapter }}
-                    </li>
-                </ul>
-            </div>
+            <manga-details-component
+                v-if="selectedManga && !selectedChapter && page=='detail'"
+                :manga-details="mangaDetails"
+                :chapters="chapters"
+                :favorite-manga="favoriteManga"
+                :language="language"
+                @go-to-menu="goToMenu"
+                @toggle-favorite="toggleFavorite"
+                @load-chapter-content="loadChapterContent"
+            ></manga-details-component>
 
-            <!-- Display selected Chapter -->
-            <div v-if="selectedChapter && page=='chapter'" class="chapter">
-                <h1>Chapter Content</h1>
-                <div class="chapter-images">
-                    <div v-for="image in chapterImages" :key="image">
-                        <img :src="image" loading="lazy" />
-                    </div>
-                </div>
-                
-                <div class="navigation-controls">
-                    <button v-if="prevChapterId" @click="loadChapterContent(prevChapterId)">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button @click="goToDetail">
-                        <i class="fas fa-list"></i>
-                    </button>
-                    <button v-if="nextChapterId" @click="loadChapterContent(nextChapterId)">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+            <chapter-content-component
+                v-if="selectedChapter && page=='chapter'"
+                :chapter-images="chapterImages"
+                :prev-chapter-id="prevChapterId"
+                :next-chapter-id="nextChapterId"
+                @load-chapter-content="loadChapterContent"
+                @go-to-detail="goToDetail"
+            ></chapter-content-component>
         </main>
     </div>
     <script type="module" src="./js/index.js"></script>

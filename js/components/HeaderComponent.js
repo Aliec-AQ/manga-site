@@ -3,7 +3,7 @@ export default {
         <header class="fixed-top">
             <div class="nav-bar">
                 <button @click="goToMenu" class="header-button">Home</button>
-                <select v-model="language">
+                <select v-model="selectedLanguage">
                     <option v-for="lang in availableLanguages" :key="lang" :value="lang">{{ lang }}</option>
                 </select>
                 <button @click="loadFavorites" class="header-button">favoris</button>
@@ -28,6 +28,16 @@ export default {
         </header>
     `,
     props: ['language', 'availableLanguages', 'searchQuery', 'showTagDropdown', 'availableTags', 'includedTags', 'excludedTags'],
+    data() {
+        return {
+            selectedLanguage: this.language
+        };
+    },
+    watch: {
+        selectedLanguage(newVal) {
+            this.$emit('update-language', newVal);
+        }
+    },
     methods: {
         goToMenu() {
             this.$emit('go-to-menu');

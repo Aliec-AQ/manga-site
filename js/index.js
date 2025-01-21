@@ -272,6 +272,11 @@ window.addEventListener('load', () => {
                 }
             },
 
+            updateLanguage(language) {
+                this.language = language;
+                this.loadManga();
+            },
+
             /*********************
              *  GESTION FAvoris  *
              *********************/
@@ -375,15 +380,5 @@ window.addEventListener('load', () => {
 
             window.addEventListener('keydown', this.handleKeydown)
         },
-
-        watch: {
-            language() {
-                if (this.selectedManga){
-                    this.loadSelectedManga(this.selectedManga);
-                }else {
-                    this.loadManga();
-                }
-            }
-        }
     }).mount('#app')
 })

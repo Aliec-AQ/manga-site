@@ -84,7 +84,7 @@ window.addEventListener('load', () => {
             },
 
             // Recherche des mangas en fonction des tags et de la requête de recherche
-            async searchManga() {
+            async searchManga(searchQuery) {
                 this.goToMenu();
                 this.loading = true;
                 this.showTagDropdown = false;
@@ -102,8 +102,8 @@ window.addEventListener('load', () => {
                         includedTags: includedTagIDs,
                         excludedTags: excludedTagIDs,
                     }
-                    if (this.searchQuery) {
-                        params.title = this.searchQuery;
+                    if (searchQuery) {
+                        params.title = searchQuery;
                     }
 
                     await this.loadManga(params)
@@ -236,7 +236,6 @@ window.addEventListener('load', () => {
             // Affiche ou cache le menu déroulant des tags
             toggleTagDropdown() {
                 this.showTagDropdown = !this.showTagDropdown;
-                console.log(this.showTagDropdown);
             },
             
             // Met à jour la sélection des tags inclus et exclus
@@ -256,7 +255,6 @@ window.addEventListener('load', () => {
                         this.includedTags = this.includedTags.filter(tag => tag !== tagName);
                     }
                 }
-                console.log(this.includedTags, this.excludedTags);
             },
 
             /*********************

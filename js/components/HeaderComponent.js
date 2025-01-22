@@ -3,8 +3,8 @@ export default {
         <header class="fixed-top">
             <div class="nav-bar">
                 <div class="dropdown">
-                    <i :class="{ fas: true, 'fa-bars': !dropdownOpen, 'fa-chevron-down': dropdownOpen }" @click="dropdownOpen = !dropdownOpen"></i>
-                    <div class="dropdown-content" v-show="dropdownOpen">
+                    <i :class="{ fas: true, 'fa-bars': !dropdownOpen, 'fa-chevron-down': dropdownOpen }" @click="toggleDropdown"></i>
+                    <div class="dropdown-content" v-show="dropdownOpen" @click="toggleDropdown">
                         <button @click="goToMenu" class="header-button">Home</button>
                         <button @click="loadFavorites" class="header-button">favoris</button>
                         <select v-model="selectedLanguage">
@@ -67,6 +67,20 @@ export default {
         },
         updateTagSelection(tagName, type) {
             this.$emit('update-tag-selection', tagName, type);
+        },
+        toggleDropdown() {
+            this.dropdownOpen = !this.dropdownOpen;
+            if (this.dropdownOpen) {
+                document.addEventListener('click', this.closeDropdown);
+            } else {
+                document.removeEventListener('click', this.closeDropdown);
+            }
+        },
+        closeDropdown(event) {
+            if (!this.$el.contains(event.target)) {
+                this.dropdownOpen = false;
+                document.removeEventListener('click', this.closeDropdown);
+            }
         }
     }
 }

@@ -7,24 +7,27 @@
     padding: 10px 20px;
     background-color: $bg-color;
     border-bottom: 1px solid $secondary-color;
+    height: 2vh;
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
 
-    i{
+    i {
         cursor: pointer;
         font-size: 2em;
     }
 
     .dropdown-content {
         border: 1px solid $secondary-color;
-        position: absolute;
+        position: fixed;
+        top: 3.7vh;
+        left: 0;
         background-color: $bg-color;
         min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
+        z-index: 1000;
 
         .header-button {
             color: $primary-color;
@@ -92,6 +95,7 @@
     .search-bar{
         position: relative;
         .icon-button {
+            background-color: $bg-color;
             position: absolute;
             right: 0.5rem;
         }

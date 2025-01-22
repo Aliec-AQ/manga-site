@@ -150,8 +150,6 @@ window.addEventListener('load', () => {
                     this.mangaDetails.coverArt = config.coverUrl + this.mangaDetails.id + '/' + detailsResponse.data.data.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName + ".512.jpg";
                     this.mangaDetails.authorDetails = detailsResponse.data.data.relationships.find(relationship => relationship.type === 'author').attributes.name;
                     
-                    console.log(this.mangaDetails);
-                    
                     this.page = "detail";
             
                     this.saveToLocalStorage();

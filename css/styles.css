@@ -5,6 +5,7 @@
   padding: 10px 20px;
   background-color: #1e1e1e;
   border-bottom: 1px solid #6c757d;
+  height: 2vh;
 }
 
 .dropdown {
@@ -17,11 +18,13 @@
 }
 .dropdown .dropdown-content {
   border: 1px solid #6c757d;
-  position: absolute;
+  position: fixed;
+  top: 3.7vh;
+  left: 0;
   background-color: #1e1e1e;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 1000;
 }
 .dropdown .dropdown-content .header-button {
   color: #28a745;
@@ -81,6 +84,7 @@
   position: relative;
 }
 .search-container .search-bar .icon-button {
+  background-color: #1e1e1e;
   position: absolute;
   right: 0.5rem;
 }

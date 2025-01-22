@@ -172,86 +172,118 @@
 }
 
 .manga-container {
-  max-width: 90%;
   margin: 0 auto;
   padding: 20px;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.manga-container h1 {
-  font-size: 2em;
-  margin-bottom: 10px;
-  color: #ffffff;
-}
-.manga-container .back-button {
-  display: inline-block;
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-}
-.manga-container .back-button:hover {
-  background-color: #218838;
-}
-.manga-container .manga-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.manga-container .manga-details img {
-  aspect-ratio: 2/3;
-  max-width: 20%;
-  height: auto;
-  border-radius: 8px;
-}
-.manga-container .manga-details .info {
-  flex: 1;
-}
-.manga-container .manga-details .info p {
-  margin: 10px 0;
-  color: #e0e0e0;
-}
-.manga-container .manga-details .info .label {
-  font-weight: bold;
-  color: #ffffff;
-}
-.manga-container .manga-details .info .tag {
-  display: inline-block;
-  background-color: #6c757d;
-  border-radius: 4px;
-  padding: 5px 10px;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  color: #ffffff;
-}
-.manga-container .description {
-  margin-top: 20px;
-  color: #e0e0e0;
 }
 .manga-container .chapter-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
-  padding: 0;
-  margin-top: 20px;
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 .manga-container .chapter-list .chapter-item {
   padding: 10px;
-  background-color: #1e1e1e;
+  margin: 10px 0;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
-  text-align: center;
+  transition: 0.4s ease;
 }
 .manga-container .chapter-list .chapter-item:hover {
-  background-color: #333;
+  color: #28a745;
+  border-color: #28a745;
+}
+.manga-container .chapter-list .chapter-item .chapter-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.manga-container .chapter-list .chapter-item .chapter-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #666;
+}
+.manga-container .manga-details .manga-details-container {
+  display: flex;
+  align-items: flex-start;
+}
+.manga-container .manga-details .manga-details-container .image-container {
+  position: relative;
+}
+.manga-container .manga-details .manga-details-container .image-container .cover-art {
+  margin-right: 20px;
+  overflow: hidden;
+  max-height: 30vh;
+  height: 100%;
+  object-fit: cover;
+}
+.manga-container .manga-details .manga-details-container .image-container .favorite-button {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  background: none;
+  border: none;
+  color: gold;
+  font-size: 1.5em;
+  cursor: pointer;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
+}
+.manga-container .manga-details .manga-details-container .image-container .favorite-button:focus {
+  outline: none;
+}
+.manga-container .manga-details .manga-details-container .image-container .favorite-button i {
+  pointer-events: none;
+}
+.manga-container .manga-details .manga-details-container .info {
+  flex: 1;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
+}
+.manga-container .manga-details .manga-details-container .info h1 {
+  margin-top: 0;
+  font-size: 2em;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
+}
+.manga-container .manga-details .manga-details-container .info .label {
+  font-weight: bold;
+}
+.manga-container .manga-details .manga-details-container .info .tag {
+  display: inline-block;
+  margin-right: 3px;
+  margin-left: 3px;
+  background-color: #f0f0f0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: black;
+  text-shadow: none;
+}
+.manga-container .manga-details .manga-details-container .info .back-button, .manga-container .manga-details .manga-details-container .info .favorite-button {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.background-container {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40vh;
+}
+.background-container .background-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  filter: blur(5px);
+  mask-image: linear-gradient(to bottom, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%);
 }
 
 .chapter {

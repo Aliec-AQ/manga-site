@@ -61,7 +61,7 @@ window.addEventListener('load', () => {
                     const response = await axios.get(`${config.apiUrl}/manga`, { params: { ...params, ...pagination, includes: ['cover_art'], availableTranslatedLanguage : [this.language] } })
                     this.mangaList = response.data.data
                     this.mangaList.forEach(manga => {
-                        manga.coverArt = config.coverUrl + manga.id + '/' + manga.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName
+                        manga.coverArt = config.coverUrl + manga.id + '/' + manga.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName + ".256.jpg"
                     });
                     this.pagination.total = response.data.total
 
@@ -118,24 +118,42 @@ window.addEventListener('load', () => {
             async loadSelectedManga(mangaId) {
                 this.loading = true;
                 this.selectedManga = mangaId;
-                try {
-                    // Fetch manga aggregate data
-                    const aggregateResponse = await axios.get(`${config.apiUrl}/manga/${mangaId}/aggregate`, {
-                        params: { translatedLanguage: [this.language] }
-                    });
-                    const volumes = aggregateResponse.data.volumes;
-                    this.chapters = Object.values(volumes).flatMap(volume => Object.values(volume.chapters));
+                this.chapters = [];
+                let offset = 0;
+                const limit = 100;
             
+                try {
+                    while (true) {
+                        const response = await axios.get(`${config.apiUrl}/manga/${mangaId}/feed`, {
+                            params: {
+                                limit,
+                                offset,
+                                translatedLanguage: [this.language],
+                                order: { chapter: 'asc' }
+                            }
+                        });
+            
+                        const newChapters = response.data.data;
+                        this.chapters.push(...newChapters);
+            
+                        if (newChapters.length < limit) break;
+                        offset += limit;
+                    }
+
+                    this.chapters.sort((a, b) => a.attributes.chapter - b.attributes.chapter);
+
                     // Fetch manga details
                     const detailsResponse = await axios.get(`${config.apiUrl}/manga/${mangaId}`, {
                         params: { includes: ['cover_art', 'author'] }
                     });
                     this.mangaDetails = detailsResponse.data.data;
-                    this.mangaDetails.coverArt = config.coverUrl+this.mangaDetails.id + '/' + detailsResponse.data.data.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName;
+                    this.mangaDetails.coverArt = config.coverUrl + this.mangaDetails.id + '/' + detailsResponse.data.data.relationships.find(relationship => relationship.type === 'cover_art').attributes.fileName + ".512.jpg";
                     this.mangaDetails.authorDetails = detailsResponse.data.data.relationships.find(relationship => relationship.type === 'author').attributes.name;
-
-                    this.page="detail"
-
+                    
+                    console.log(this.mangaDetails);
+                    
+                    this.page = "detail";
+            
                     this.saveToLocalStorage();
                 } catch (error) {
                     this.error = error;
